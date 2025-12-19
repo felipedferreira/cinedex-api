@@ -1,0 +1,12 @@
+##################################################
+# Cinedex API – Local Development
+##################################################
+
+@baseUrl = http://localhost:8080
+@apiBase = {{baseUrl}}/movie-svc
+@json = application/json
+
+
+### Get all movies
+GET {{apiBase}}/movies
+Accept: {{json}}

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Cinedex.Application.Abstractions\Cinedex.Application.Abstractions.csproj" />
+      <ProjectReference Include="..\Cinedex.Infrastructure\Cinedex.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

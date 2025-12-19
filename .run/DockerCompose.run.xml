@@ -1,0 +1,24 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DockerCompose" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
+    <deployment type="docker-compose.yml">
+      <settings>
+        <option name="envFilePath" value="" />
+        <option name="envVars">
+          <list>
+            <DockerEnvVarImpl>
+              <option name="name" value="ASPNETCORE_ENVIRONMENT" />
+              <option name="value" value="Development" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="ASPNETCORE_URLS" />
+              <option name="value" value="http://+:8080" />
+            </DockerEnvVarImpl>
+          </list>
+        </option>
+        <option name="sourceFilePath" value="compose.yaml" />
+      </settings>
+    </deployment>
+    <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
+    <method v="2" />
+  </configuration>
+</component>

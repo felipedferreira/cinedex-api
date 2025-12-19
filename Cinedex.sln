@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinedex.Web", "src\Cinedex.Web\Cinedex.Web.csproj", "{491ECFFC-1077-4CC0-81AA-532744D16941}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{57EB14A3-0DE3-4ED0-A697-BE27B38BAFFF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{7A187A71-4341-4198-B087-DC656BB93BBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{5DEB180B-481E-4765-AF4C-7A4301EC6AD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinedex.Application", "src\Cinedex.Application\Cinedex.Application.csproj", "{6AF57BF1-CDF5-4781-97D6-A607F8BB3BA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinedex.Application.Abstractions", "src\Cinedex.Application.Abstractions\Cinedex.Application.Abstractions.csproj", "{100A6DCA-32FF-42B3-BAB5-63C3F00B9639}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinedex.Domain", "src\Cinedex.Domain\Cinedex.Domain.csproj", "{1904652C-9DFD-453D-AD0E-1D311274F937}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinedex.Infrastructure", "src\Cinedex.Infrastructure\Cinedex.Infrastructure.csproj", "{8C3A6E5E-8D3C-43F3-A991-4984DB28A9F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{491ECFFC-1077-4CC0-81AA-532744D16941}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{491ECFFC-1077-4CC0-81AA-532744D16941}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{491ECFFC-1077-4CC0-81AA-532744D16941}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{491ECFFC-1077-4CC0-81AA-532744D16941}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AF57BF1-CDF5-4781-97D6-A607F8BB3BA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AF57BF1-CDF5-4781-97D6-A607F8BB3BA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AF57BF1-CDF5-4781-97D6-A607F8BB3BA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AF57BF1-CDF5-4781-97D6-A607F8BB3BA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{100A6DCA-32FF-42B3-BAB5-63C3F00B9639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{100A6DCA-32FF-42B3-BAB5-63C3F00B9639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{100A6DCA-32FF-42B3-BAB5-63C3F00B9639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{100A6DCA-32FF-42B3-BAB5-63C3F00B9639}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1904652C-9DFD-453D-AD0E-1D311274F937}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1904652C-9DFD-453D-AD0E-1D311274F937}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1904652C-9DFD-453D-AD0E-1D311274F937}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1904652C-9DFD-453D-AD0E-1D311274F937}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C3A6E5E-8D3C-43F3-A991-4984DB28A9F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C3A6E5E-8D3C-43F3-A991-4984DB28A9F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C3A6E5E-8D3C-43F3-A991-4984DB28A9F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C3A6E5E-8D3C-43F3-A991-4984DB28A9F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7A187A71-4341-4198-B087-DC656BB93BBB} = {57EB14A3-0DE3-4ED0-A697-BE27B38BAFFF}
+		{491ECFFC-1077-4CC0-81AA-532744D16941} = {7A187A71-4341-4198-B087-DC656BB93BBB}
+		{5DEB180B-481E-4765-AF4C-7A4301EC6AD4} = {57EB14A3-0DE3-4ED0-A697-BE27B38BAFFF}
+		{6AF57BF1-CDF5-4781-97D6-A607F8BB3BA5} = {5DEB180B-481E-4765-AF4C-7A4301EC6AD4}
+		{100A6DCA-32FF-42B3-BAB5-63C3F00B9639} = {5DEB180B-481E-4765-AF4C-7A4301EC6AD4}
+		{1904652C-9DFD-453D-AD0E-1D311274F937} = {5DEB180B-481E-4765-AF4C-7A4301EC6AD4}
+		{8C3A6E5E-8D3C-43F3-A991-4984DB28A9F4} = {5DEB180B-481E-4765-AF4C-7A4301EC6AD4}
+	EndGlobalSection
+EndGlobal

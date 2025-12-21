@@ -38,3 +38,6 @@ jobs:
     - name: Deploy to /var/www/cinedex-api
       run: |
         rsync -av --delete ./publish/ /var/www/cinedex-api/
+
+    - name: Restart cinedex-api service
+      run: systemctl restart cinedex-api.service

@@ -21,13 +21,29 @@ public class Program
                 .Enrich.FromLogContext()
                 .WriteTo.Console(theme: AnsiConsoleTheme.Literate);
         });
+        
+        var corsEnabled = builder.Configuration.GetValue<bool>("CORS:Enabled");
+        if (corsEnabled)
+        {
+            var allowedOrigins = builder.Configuration.GetSection("CORS:AllowedOrigins").Get<string[]>();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("DevCors", policy =>
+                {
+                    policy
+                        .WithOrigins(allowedOrigins ?? [])
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+        }
 
         builder.Services.AddEndpointsApiExplorer();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
-        
         app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
@@ -56,7 +72,11 @@ public class Program
         
         // Sets the path base to "movie-svc" so that all endpoints are prefixed with this path.
         app.UsePathBase("/movie-svc");
-        
+        if (corsEnabled)
+        {
+            app.UseCors("DevCors");
+        }
+
         // Maps endpoints
         app.MapCreateMovieEndpoint();
         app.MapGetMoviesEndpoint();

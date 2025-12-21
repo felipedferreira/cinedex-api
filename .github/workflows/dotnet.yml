@@ -28,4 +28,13 @@ jobs:
       run: dotnet test --configuration Release --no-build
 
     - name: Publish
-      run: dotnet publish --configuration Release --no-build --nologo --output ./var/www/cinedex-api/
+      run: |
+        dotnet publish \
+          --configuration Release \
+          --no-build \
+          --nologo \
+          --output ./publish
+        
+    - name: Deploy to /var/www/cinedex-api
+      run: |
+        sudo rsync -av --delete ./publish/ /var/www/cinedex-api/

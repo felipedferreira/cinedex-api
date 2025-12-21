@@ -40,4 +40,4 @@ jobs:
         rsync -av --delete ./publish/ /var/www/cinedex-api/
 
     - name: Restart cinedex-api service
-      run: systemctl restart kestrel-movie-svc.service
+      run: sudo systemctl restart kestrel-movie-svc.service

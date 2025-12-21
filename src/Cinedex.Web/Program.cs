@@ -80,6 +80,16 @@ public class Program
         // Maps endpoints
         app.MapCreateMovieEndpoint();
         app.MapGetMoviesEndpoint();
+        app.MapGet("/configurations", (IConfiguration configuration) =>
+        {
+            return Results.Ok(new
+            {
+                Environment = configuration["ASPNETCORE_ENVIRONMENT"],
+                CORSEnabled = configuration.GetValue<bool>("CORS:Enabled"),
+                CORS = configuration.GetValue<string[]>("CORS:AllowedOrigins") ?? Enumerable.Empty<string>(),
+            });
+        })
+        .WithTags("Configurations");
         
         app.Logger.LogInformation("Application has started.");
         

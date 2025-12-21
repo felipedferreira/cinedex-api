@@ -37,4 +37,4 @@ jobs:
         
     - name: Deploy to /var/www/cinedex-api
       run: |
-        sudo rsync -av --delete ./publish/ /var/www/cinedex-api/
+        rsync -av --delete ./publish/ /var/www/cinedex-api/

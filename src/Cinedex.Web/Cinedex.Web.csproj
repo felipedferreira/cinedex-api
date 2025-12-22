@@ -25,4 +25,8 @@
       <ProjectReference Include="..\Cinedex.Application\Cinedex.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="logs\" />
+    </ItemGroup>
+
 </Project>

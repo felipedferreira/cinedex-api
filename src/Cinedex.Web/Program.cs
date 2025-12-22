@@ -1,3 +1,4 @@
+using Cinedex.Application;
 using Microsoft.AspNetCore.HttpOverrides;
 using Cinedex.Web.Features.Movies.CreateMovie.v1;
 using Cinedex.Web.Features.Movies.GetMovies.v1;
@@ -39,6 +40,7 @@ public class Program
             });
         }
 
+        builder.Services.AddApplicationServices();
         builder.Services.AddEndpointsApiExplorer();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
@@ -80,6 +82,7 @@ public class Program
         // Maps endpoints
         app.MapCreateMovieEndpoint();
         app.MapGetMoviesEndpoint();
+        // temporary endpoint to expose configuration values - for demo purposes only
         app.MapGet("/configurations", (IConfiguration configuration) =>
         {
             return Results.Ok(new

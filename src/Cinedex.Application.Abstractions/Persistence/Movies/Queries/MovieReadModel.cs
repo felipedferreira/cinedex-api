@@ -1,4 +1,4 @@
-﻿namespace Cinedex.Application.Abstractions.Movies.Queries;
+﻿namespace Cinedex.Application.Abstractions.Persistence.Movies.Queries;
 
 public class MovieReadModel
 {

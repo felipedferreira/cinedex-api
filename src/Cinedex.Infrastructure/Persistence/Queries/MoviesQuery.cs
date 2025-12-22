@@ -1,6 +1,6 @@
-﻿using Cinedex.Application.Abstractions.Movies.Queries;
+﻿using Cinedex.Application.Abstractions.Persistence.Movies.Queries;
 
-namespace Cinedex.Infrastructure.Queries;
+namespace Cinedex.Infrastructure.Persistence.Queries;
 
 public class MoviesQuery : IMoviesQuery
 {

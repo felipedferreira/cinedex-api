@@ -1,7 +1,11 @@
+using System.Text;
 using Cinedex.Application;
+using Cinedex.Web.Features.Authentication.Login.v1;
 using Microsoft.AspNetCore.HttpOverrides;
 using Cinedex.Web.Features.Movies.CreateMovie.v1;
 using Cinedex.Web.Features.Movies.GetMovies.v1;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -44,12 +48,32 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+        
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "yourdomain.com",
+                    ValidAudience = "yourdomain.com",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_super_secret_key")),
+                    ClockSkew = TimeSpan.FromSeconds(30),
+                };
+            });
+        builder.Services.AddAuthorization();
 
         var app = builder.Build();
         app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
         });
+        
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -82,18 +106,8 @@ public class Program
         // Maps endpoints
         app.MapCreateMovieEndpoint();
         app.MapGetMoviesEndpoint();
-        // temporary endpoint to expose configuration values - for demo purposes only
-        app.MapGet("/configurations", (IConfiguration configuration) =>
-        {
-            return Results.Ok(new
-            {
-                Environment = configuration["ASPNETCORE_ENVIRONMENT"],
-                CORSEnabled = configuration.GetValue<bool>("CORS:Enabled"),
-                CORS = configuration.GetValue<string[]>("CORS:AllowedOrigins") ?? Enumerable.Empty<string>(),
-            });
-        })
-        .WithTags("Configurations");
-        
+        app.MapLoginEndpoint();
+
         app.Logger.LogInformation("Application has started.");
         
         await app.RunAsync();

@@ -1,4 +1,4 @@
-﻿using Cinedex.Application.Abstractions.Movies.Queries;
+﻿using Cinedex.Application.Abstractions.Persistence.Movies.Queries;
 
 namespace Cinedex.Application.Movies.Queries.GetMovies;
 

@@ -1,8 +1,7 @@
 ﻿using Cinedex.Application.Abstractions.Movies.Queries;
 using Cinedex.Infrastructure.Queries;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace Cinedex.Infrastructure;
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjectionExtensions
 {

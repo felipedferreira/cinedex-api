@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using System.Text;
 using Cinedex.Application;
 using Cinedex.Web.Features.Authentication.Login.v1;
@@ -34,7 +35,7 @@ public class Program
             options.Cookie.Name = "XSRF-TOKEN";
             options.Cookie.HttpOnly = false;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.Cookie.SameSite = SameSiteMode.Strict;
             options.Cookie.Path = "/";
         });
         
@@ -113,6 +114,7 @@ public class Program
         
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseAntiforgery();
         
         // Maps endpoints
         app.MapCreateMovieEndpoint();
@@ -122,7 +124,7 @@ public class Program
         {
             var tokens = antiforgery.GetAndStoreTokens(ctx);
 
-            return Results.NoContent();
+            return Results.Content(tokens.RequestToken, MediaTypeNames.Text.Plain);
         });
 
         app.Logger.LogInformation("Application has started.");

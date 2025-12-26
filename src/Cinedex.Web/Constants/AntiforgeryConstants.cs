@@ -11,7 +11,7 @@ public static class AntiforgeryConstants
     /// ASP.NET Core validates this header against the anti-forgery cookie to
     /// protect against Cross-Site Request Forgery (CSRF) attacks.
     /// </summary>
-    public const string XsrfHeader = "XSRF-TOKEN";
+    public const string XsrfHeader = "X-XSRF-TOKEN";
     
     /// <summary>
     /// The cookie name used to store the anti-forgery (XSRF/CSRF) token on the client.

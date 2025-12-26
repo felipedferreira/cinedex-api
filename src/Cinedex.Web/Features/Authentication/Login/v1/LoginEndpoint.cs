@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using Cinedex.Application.Abstractions.Authentication;
+using Cinedex.Web.Constants;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,21 +35,28 @@ public static class LoginEndpoint
             .WithTags("Authentication");
         
         app.MapPost("/refresh", async (
-                [FromBody] LoginRequest request,
                 ITokenProvider tokenProvider,
                 IAntiforgery antiforgery,
                 HttpContext httpContext,
                 CancellationToken ct) =>
             {
-                var userId = Guid.NewGuid();
-                await antiforgery.ValidateRequestAsync(httpContext);
                 // get cookie from request
                 if (!httpContext.Request.Cookies.TryGetValue("REFRESH_TOKEN", out var refreshToken))
                 {
                     Console.WriteLine("No refresh token found in cookies.");
                 }
-                var jwt = tokenProvider.GenerateToken(userId, request.Email);
-                return Results.Content(jwt, MediaTypeNames.Text.Plain);
+
+                if (!httpContext.Request.Headers.TryGetValue(AntiforgeryConstants.XsrfHeader, out var xsrfHeader))
+                {
+                    Console.WriteLine("xsrfHeader not found in headers.");
+                }
+
+                await antiforgery.ValidateRequestAsync(httpContext);
+                // var userId = Guid.NewGuid();
+                // var email = "useremail@yahoo.com";
+                // var jwt = tokenProvider.GenerateToken(userId, email);
+                // return Results.Content(jwt, MediaTypeNames.Text.Plain);
+                return Results.NoContent();
             })
             .WithName("RefreshToken")
             .WithTags("Authentication");

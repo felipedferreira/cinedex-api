@@ -4,6 +4,7 @@ using Cinedex.Web.Features.Authentication.Login.v1;
 using Microsoft.AspNetCore.HttpOverrides;
 using Cinedex.Web.Features.Movies.CreateMovie.v1;
 using Cinedex.Web.Features.Movies.GetMovies.v1;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
@@ -27,6 +28,16 @@ public class Program
                 .WriteTo.Console(theme: AnsiConsoleTheme.Literate);
         });
         
+        builder.Services.AddAntiforgery(options =>
+        {
+            options.HeaderName = "X-XSRF-TOKEN";
+            options.Cookie.Name = "XSRF-TOKEN";
+            options.Cookie.HttpOnly = false;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.Cookie.Path = "/";
+        });
+        
         var corsEnabled = builder.Configuration.GetValue<bool>("CORS:Enabled");
         if (corsEnabled)
         {
@@ -37,9 +48,9 @@ public class Program
                 {
                     policy
                         .WithOrigins(allowedOrigins ?? [])
-                        .AllowAnyOrigin()
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                 });
             });
         }
@@ -72,9 +83,6 @@ public class Program
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
         });
         
-        app.UseAuthentication();
-        app.UseAuthorization();
-
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -102,11 +110,20 @@ public class Program
         {
             app.UseCors("DevCors");
         }
-
+        
+        app.UseAuthentication();
+        app.UseAuthorization();
+        
         // Maps endpoints
         app.MapCreateMovieEndpoint();
         app.MapGetMoviesEndpoint();
         app.MapLoginEndpoint();
+        app.MapGet("/csrf", (IAntiforgery antiforgery, HttpContext ctx) =>
+        {
+            var tokens = antiforgery.GetAndStoreTokens(ctx);
+
+            return Results.NoContent();
+        });
 
         app.Logger.LogInformation("Application has started.");
         

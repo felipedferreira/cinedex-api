@@ -2,8 +2,7 @@ using System.Text;
 using Cinedex.Application;
 using Cinedex.Web.Features.Authentication.Login.v1;
 using Microsoft.AspNetCore.HttpOverrides;
-using Cinedex.Web.Features.Movies.CreateMovie.v1;
-using Cinedex.Web.Features.Movies.GetMovies.v1;
+using Cinedex.Web.Features.Movies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
@@ -104,8 +103,7 @@ public class Program
         }
 
         // Maps endpoints
-        app.MapCreateMovieEndpoint();
-        app.MapGetMoviesEndpoint();
+        app.MapMoviesEndpoint();
         app.MapLoginEndpoint();
 
         app.Logger.LogInformation("Application has started.");

@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Json;
+using Cinedex.Integration.Web.TestHelpers;
 using Cinedex.Web.Features.Movies.GetMovies.v1;
-using Cinedex.Web.IntegrationTests.TestHelpers;
 
-namespace Cinedex.Web.IntegrationTests;
+namespace Cinedex.IntegrationTests.Web;
 
 public class GetMoviesEndpointIntegrationTests : IClassFixture<CinedexWebApplicationFactory>
 {

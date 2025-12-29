@@ -1,4 +1,4 @@
-﻿namespace Cinedex.Web.Features.Authentication.Login.v1;
+﻿namespace Cinedex.Web.Features.Authentication.Login;
 
 public sealed record LoginRequest(
     string Email,

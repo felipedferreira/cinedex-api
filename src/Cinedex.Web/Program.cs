@@ -1,10 +1,9 @@
 using System.Net.Mime;
 using System.Text;
 using Cinedex.Application;
-using Cinedex.Web.Features.Authentication.Login.v1;
+using Cinedex.Web.Features.Authentication.Login;
 using Microsoft.AspNetCore.HttpOverrides;
-using Cinedex.Web.Features.Movies.CreateMovie.v1;
-using Cinedex.Web.Features.Movies.GetMovies.v1;
+using Cinedex.Web.Features.Movies;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -117,8 +116,7 @@ public class Program
         app.UseAntiforgery();
         
         // Maps endpoints
-        app.MapCreateMovieEndpoint();
-        app.MapGetMoviesEndpoint();
+        app.MapMoviesEndpoints();
         app.MapLoginEndpoint();
         app.MapGet("/csrf", (IAntiforgery antiforgery, HttpContext ctx) =>
         {

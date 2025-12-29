@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Cinedex.Integration.Web.TestHelpers;
-using Cinedex.Web.Features.Movies.GetMovies.v1;
+using Cinedex.Web.Features.Movies.GetMovies;
 
 namespace Cinedex.IntegrationTests.Web;
 

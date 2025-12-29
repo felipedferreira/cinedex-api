@@ -4,7 +4,7 @@ using Cinedex.Web.Constants;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cinedex.Web.Features.Authentication.Login.v1;
+namespace Cinedex.Web.Features.Authentication.Login;
 
 public static class LoginEndpoint
 {

@@ -23,7 +23,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{316DDE58
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinedex.Integration.Web", "tests\integration\Cinedex.Integration.Web\Cinedex.Integration.Web.csproj", "{7A2C35B0-E724-45A0-818F-2FE8B9F5164D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{BE417CF9-890F-40F2-A7CA-E9A3512466B1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{CF76D2EE-DFE9-4844-A66F-B1AAE569BD17}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+		.dockerignore = .dockerignore
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{3EDD906E-A5D8-4C8C-A5A3-0ADD57B7A157}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{32B8852E-33C3-45D5-BE02-EB903893C974}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,7 +78,7 @@ Global
 		{100A6DCA-32FF-42B3-BAB5-63C3F00B9639} = {5DEB180B-481E-4765-AF4C-7A4301EC6AD4}
 		{1904652C-9DFD-453D-AD0E-1D311274F937} = {5DEB180B-481E-4765-AF4C-7A4301EC6AD4}
 		{8C3A6E5E-8D3C-43F3-A991-4984DB28A9F4} = {5DEB180B-481E-4765-AF4C-7A4301EC6AD4}
-		{BE417CF9-890F-40F2-A7CA-E9A3512466B1} = {316DDE58-B308-418C-A548-6B8450683ED4}
-		{7A2C35B0-E724-45A0-818F-2FE8B9F5164D} = {BE417CF9-890F-40F2-A7CA-E9A3512466B1}
+		{7A2C35B0-E724-45A0-818F-2FE8B9F5164D} = {316DDE58-B308-418C-A548-6B8450683ED4}
+		{32B8852E-33C3-45D5-BE02-EB903893C974} = {3EDD906E-A5D8-4C8C-A5A3-0ADD57B7A157}
 	EndGlobalSection
 EndGlobal

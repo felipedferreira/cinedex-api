@@ -1,7 +1,7 @@
 # 🎬 Cinedex
 
-**Cinedex** is a modern ASP.NET Core REST API that lets users explore, search, and manage movie data — inspired by platforms like IMDb and TMDb.  
-It’s built with **Clean Architecture** and **Domain-Driven Design (DDD)** principles, focusing on scalability, maintainability, and clean separation of concerns.
+**Cinedex** is a modern ASP.NET Core REST API that lets users explore, search, and manage movie data — inspired by platforms like IMDb and TMDb.
+It's built with **Clean Architecture** and **Domain-Driven Design (DDD)** principles, focusing on scalability, maintainability, and clean separation of concerns.
 
 ---
 
@@ -16,20 +16,20 @@ Cinedex.sln
 │   ├── Cinedex.Application/            # Use Cases, Commands, Queries, Validation
 │   ├── Cinedex.Application.Abstractions/ # Public Contracts and Shared Interfaces
 │   ├── Cinedex.Infrastructure/         # EF Core, Repositories, Caching, Auth, etc.
-│   └── Cinedex.Presentation/                 # REST Controllers / Endpoints
+│   └── Cinedex.Web/                    # Minimal API Endpoints, Program.cs
 └── tests/
-    ├── Cinedex.UnitTests/
-    └── Cinedex.IntegrationTests/
+    └── integration/
+        └── Cinedex.Integration.Web/    # Integration tests for Web API
 ```
 
 ### Dependency Flow
 
 ```
-Presentation → Application
+Web → Application
+Web → Infrastructure (for DI registration)
 Infrastructure → Application.Abstractions
 Application → Application.Abstractions
 Application.Abstractions → Domain
-Infrastructure → Application.Abstractions
 ```
 
 ---
@@ -38,24 +38,27 @@ Infrastructure → Application.Abstractions
 
 | Layer | Technologies |
 |-------|---------------|
-| **Web API** | ASP.NET Core 9, Minimal API / Controllers |
+| **Web API** | ASP.NET Core 9, Minimal API |
+| **API Documentation** | Scalar UI (OpenAPI 3.0) |
 | **Application** | MediatR (CQRS), FluentValidation, Mapster |
 | **Infrastructure** | EF Core, SQL Server/PostgreSQL, Redis Cache |
+| **Authentication** | JWT Bearer Tokens, Cookie-based Refresh Tokens, XSRF Protection |
 | **Testing** | xUnit, Testcontainers |
-| **Observability** | Serilog, ProblemDetails, OpenTelemetry (optional) |
+| **Logging** | Serilog with Console sink |
 
 ---
 
 ## 🚀 Features
 
-- 🎞️ **Movie Catalog** — Browse, search, and filter movies by title, genre, or release year.  
-- 🧑‍🎤 **Cast & Crew** — Retrieve structured information about actors, directors, and roles.  
-- ⭐ **Ratings System** — Track and aggregate user ratings and reviews.  
-- ⚡ **Caching Support** — Hybrid caching (Memory + Redis) for faster response times.  
-- 🧱 **Clean Architecture** — Strict separation between layers for maintainability.  
-- 🧩 **DDD Concepts** — Aggregates, Value Objects, Domain Events, Repositories.  
-- ✅ **Validation & Error Handling** — FluentValidation and standardized ProblemDetails.  
-- 🔒 **Authentication Ready** — JWT / OAuth2 abstractions for secure endpoints.  
+- 🎞️ **Movie Catalog** — Browse, search, and filter movies by title, genre, or release year.
+- 🔐 **Authentication System** — JWT access tokens with secure HTTP-only refresh token cookies.
+- 🛡️ **XSRF Protection** — Anti-forgery tokens for secure state-changing operations.
+- 📚 **API Documentation** — Interactive Scalar UI with code examples (C#, JavaScript, cURL).
+- ⚡ **Caching Support** — Hybrid caching (Memory + Redis) for faster response times.
+- 🧱 **Clean Architecture** — Strict separation between layers for maintainability.
+- 🧩 **DDD Concepts** — Aggregates, Value Objects, Domain Events, Repositories.
+- ✅ **Validation & Error Handling** — FluentValidation and standardized ProblemDetails.
+- 🚀 **Path Prefix Support** — All API routes automatically prefixed with `/movie-svc`.  
 
 ---
 
@@ -77,3 +80,7 @@ Each project automatically inherits these settings for consistency.
 This project is licensed under the [MIT License](LICENSE).
 
 ---
+
+## 📖 Extra Documentation
+
+- **[Configuration Guide](CONFIGURATIONS.md)** — Environment setup, JWT, CORS, cookies, security settings

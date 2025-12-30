@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Cinedex.Web.Features.Movies.CreateMovie.v1;
+namespace Cinedex.Web.Features.Movies.CreateMovie;
 
 public class CreateMovieRequest
 {

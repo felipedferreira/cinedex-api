@@ -1,8 +1,8 @@
 ﻿using Cinedex.Application.Abstractions.Persistence.Movies.Queries;
 
-namespace Cinedex.Application.Movies.Queries.GetMovies;
+namespace Cinedex.Application.Movies.GetMovies;
 
-public class GetMoviesHandler(IMoviesQuery moviesQuery)
+public class GetMoviesUseCase(IMoviesQuery moviesQuery)
 {
     public async Task<IEnumerable<MovieDetails>> HandleAsync(CancellationToken cancellationToken)
     {

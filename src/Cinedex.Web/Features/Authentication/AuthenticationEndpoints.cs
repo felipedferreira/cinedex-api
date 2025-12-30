@@ -1,5 +1,7 @@
 using System.Net.Mime;
 using Cinedex.Application.Abstractions.Authentication;
+using Cinedex.Application.Authentication.Login;
+using Cinedex.Application.Authentication.Refresh;
 using Cinedex.Web.Constants;
 using Cinedex.Web.Features.Authentication.Login;
 using Microsoft.AspNetCore.Antiforgery;
@@ -13,24 +15,16 @@ internal static class AuthenticationEndpoints
     {
         var authGroup = app.MapGroup("/authentication").WithTags("Authentication");
 
-        authGroup.MapPost("/login", ([FromBody] LoginRequest request, ITokenProvider tokenProvider, HttpContext httpContext, CancellationToken ct) =>
+        authGroup.MapPost("/login", async ([FromBody] LoginRequest request, [FromServices] LoginUseCase useCase, HttpContext httpContext, CancellationToken cancellationToken) =>
             {
-                var userId = Guid.NewGuid();
-                var accessToken = tokenProvider.GenerateAccessToken(userId, request.Email);
-                // TODO: Write code that will generate a refresh token
-                var refreshToken = accessToken;
-                httpContext.Response.Cookies.Append(
-                    AuthenticationConstants.RefreshTokenCookie,
-                    refreshToken,
-                    new CookieOptions
-                    {
-                        HttpOnly = true, // Prevents access via JavaScript
-                        Secure = true,   // Ensure it's only sent over HTTPS
-                        SameSite = SameSiteMode.Strict, // Mitigate CSRF attacks we will set this to same site.
-                        Path = $"{PathConstants.ApiBasePath}/auth/refresh", // Cookie is only sent to the refresh endpoint
-                        MaxAge = TimeSpan.FromDays(7),
-                    });
-                return Results.Content(accessToken, MediaTypeNames.Text.Plain);
+                var command = new LoginCommand
+                {
+                    Email = request.Email,
+                    Password = request.Password,
+                };
+                var tokens = await useCase.HandleAsync(command, cancellationToken);
+                SetRefreshTokenCookie(httpContext, tokens.RefreshToken);
+                return Results.Content(tokens.AccessToken, MediaTypeNames.Text.Plain);
             })
             .WithName("Login")
             .WithSummary("Authenticates a user and returns an access token")
@@ -38,33 +32,62 @@ internal static class AuthenticationEndpoints
             .Produces<string>(StatusCodes.Status200OK, contentType: MediaTypeNames.Text.Plain);
 
         authGroup.MapPost("/refresh", async (
-                IAntiforgery antiforgery,
+                [FromServices] IAntiforgery antiforgery,
+                [FromServices] RefreshUseCase useCase,
                 HttpContext httpContext,
-                CancellationToken ct) =>
+                CancellationToken cancellationToken) =>
             {
-                // get cookie from request using the const
-                if (!httpContext.Request.Cookies.TryGetValue(AuthenticationConstants.RefreshTokenCookie, out var refreshToken))
+                #region [1. Validate CSRF token (security check before any processing) returns 403 if invalid]
+                try
                 {
-                    // TODO - consider what to do if no refresh token is found
-                    Console.WriteLine("No refresh token found in cookies.");
+                    await antiforgery.ValidateRequestAsync(httpContext);
                 }
-
-                // consider what to do if no xsrf header is found
-                if (!httpContext.Request.Headers.TryGetValue(AntiforgeryConstants.XsrfHeader, out var xsrfHeader))
+                catch (AntiforgeryValidationException)
                 {
-                    Console.WriteLine("xsrfHeader not found in headers.");
+                    // 403 - CSRF validation failed
+                    return Results.Forbid();
                 }
+                #endregion
 
-                // should we validate the refresh token here? should this belong in application layer?
-                await antiforgery.ValidateRequestAsync(httpContext);
+                #region [2. Extract refresh token from cookie]
+                // Check for refresh token cookie
+                if (!httpContext.Request.Cookies.TryGetValue(AuthenticationConstants.RefreshTokenCookie, out var refreshToken) || string.IsNullOrWhiteSpace(refreshToken))
+                {
+                    // 401 - When session is no longer valid
+                    return Results.Unauthorized();
+                }
+                #endregion
 
-                return Results.NoContent();
+                var command = new RefreshCommand
+                {
+                    RefreshToken = refreshToken,
+                };
+                var tokens = await useCase.HandleAsync(command, cancellationToken);
+                SetRefreshTokenCookie(httpContext, tokens.RefreshToken);
+                return Results.Content(tokens.AccessToken, MediaTypeNames.Text.Plain);
             })
             .WithName("RefreshToken")
             .WithSummary("Refreshes an access token using a refresh token cookie")
             .WithDescription("Uses the refresh token from the HTTP-only cookie and XSRF token to generate a new access token. Requires X-XSRF-TOKEN header.")
-            .Produces(StatusCodes.Status204NoContent);
+            .Produces<string>(StatusCodes.Status200OK, contentType: MediaTypeNames.Text.Plain)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden);
 
         return app;
+    }
+
+    private static void SetRefreshTokenCookie(HttpContext httpContext, string refreshToken)
+    {
+        httpContext.Response.Cookies.Append(
+            AuthenticationConstants.RefreshTokenCookie,
+            refreshToken,
+            new CookieOptions
+            {
+                HttpOnly = true, // Prevents access via JavaScript
+                Secure = true,   // Ensure it's only sent over HTTPS
+                SameSite = SameSiteMode.Strict, // Mitigate CSRF attacks we will set this to same site.
+                Path = "/authentication/refresh", // Cookie is only sent to the refresh endpoint
+                MaxAge = TimeSpan.FromDays(7),
+            });
     }
 }

@@ -2,12 +2,12 @@
 using Cinedex.Web.Features.Movies.GetMovies;
 using Cinedex.Web.IntegrationTests.TestHelpers;
 
-namespace Cinedex.Web.IntegrationTests;
+namespace Cinedex.Web.IntegrationTests.Features.Movies;
 
-public class GetMoviesEndpointIntegrationTests : IClassFixture<CinedexWebApplicationFactory>
+public class MoviesEndpointsIntegrationTests : IClassFixture<CinedexWebApplicationFactory>
 {
     private readonly CinedexWebApplicationFactory _factory;
-    public GetMoviesEndpointIntegrationTests(CinedexWebApplicationFactory factory)
+    public MoviesEndpointsIntegrationTests(CinedexWebApplicationFactory factory)
     {
         _factory = factory;
     }

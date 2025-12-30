@@ -1,4 +1,6 @@
-﻿using Cinedex.Application.Movies.Queries.GetMovies;
+﻿using Cinedex.Application.Authentication.Login;
+using Cinedex.Application.Authentication.Refresh;
+using Cinedex.Application.Movies.GetMovies;
 using Cinedex.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +11,9 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         return services
-            .AddScoped<GetMoviesHandler>()
+            .AddScoped<GetMoviesUseCase>()
+            .AddScoped<LoginUseCase>()
+            .AddScoped<RefreshUseCase>()
             .AddInfrastructureServices();
     }
 }

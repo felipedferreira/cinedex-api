@@ -2,5 +2,6 @@
 
 public interface ITokenProvider
 {
-    string GenerateAccessToken(Guid userId, string email);
+    string CreateAccessToken(Guid userId, string email);
+    string CreateRefreshToken();
 }

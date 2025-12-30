@@ -1,4 +1,4 @@
-using Cinedex.Application.Movies.Queries.GetMovies;
+using Cinedex.Application.Movies.GetMovies;
 using Cinedex.Web.Features.Movies.CreateMovie;
 using Cinedex.Web.Features.Movies.GetMovies;
 
@@ -21,18 +21,17 @@ internal static class MoviesEndpoints
         .Produces(StatusCodes.Status201Created)
         .ProducesProblem(StatusCodes.Status400BadRequest);
 
-        moviesGroup.MapGet("/", async (ILogger<Program> logger, GetMoviesHandler handler, CancellationToken ct) =>
+        moviesGroup.MapGet("/", async (ILogger<Program> logger, GetMoviesUseCase useCase, CancellationToken ct) =>
         {
             logger.LogInformation("Received request to get movies");
-            var movieDetails = await handler.HandleAsync(ct);
+            var movieDetails = await useCase.HandleAsync(ct);
             var movies = movieDetails.Select(movieDetail => new MovieResponse(movieDetail.Id, movieDetail.Title, movieDetail.Year));
             return Results.Ok(movies);
         })
         .WithName("GetMovies")
         .WithSummary("Retrieves all movies")
         .WithDescription("Returns a list of all movies in the catalog, including their ID, title, and release year.")
-        .Produces<IEnumerable<MovieResponse>>(StatusCodes.Status200OK)
-        .ProducesProblem(StatusCodes.Status500InternalServerError);
+        .Produces<IEnumerable<MovieResponse>>(StatusCodes.Status200OK);
 
         return app;
     }

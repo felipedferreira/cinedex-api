@@ -144,11 +144,15 @@ public class Program
         // Maps endpoints
         app.MapMoviesEndpoints();
         app.MapAuthenticationEndpoints();
-        app.MapGet("/csrf", (IAntiforgery antiforgery, HttpContext ctx) =>
-        {
-            var tokens = antiforgery.GetAndStoreTokens(ctx);
-            return Results.Content(tokens.RequestToken, MediaTypeNames.Text.Plain);
-        });
+        app
+            .MapGet("/csrf", (IAntiforgery antiforgery, HttpContext ctx) =>
+            {
+                var tokens = antiforgery.GetAndStoreTokens(ctx);
+                return Results.Content(tokens.RequestToken, MediaTypeNames.Text.Plain);
+            })
+            .WithSummary("Get CSRF token")
+            .WithDescription("Generates and returns a new CSRF token for client-side form submissions. The token should be included in the X-XSRF-TOKEN header for state-changing requests.")
+            .Produces<string>(StatusCodes.Status200OK, MediaTypeNames.Text.Plain);
 
         app.Logger.LogInformation("Application has started.");
         

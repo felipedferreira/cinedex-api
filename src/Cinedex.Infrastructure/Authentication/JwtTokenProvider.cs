@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography;
+using System.Text;
 using Cinedex.Application.Abstractions.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -11,7 +12,7 @@ public class JwtTokenProvider(IOptions<JwtOptions> jwtOptions) : ITokenProvider
 {
     private readonly JwtOptions _jwtOptions = jwtOptions.Value;
     
-    public string GenerateAccessToken(Guid userId, string email)
+    public string CreateAccessToken(Guid userId, string email)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -32,5 +33,19 @@ public class JwtTokenProvider(IOptions<JwtOptions> jwtOptions) : ITokenProvider
         var jwt = handler.CreateToken(tokenDescriptor);
         
         return jwt;
+    }
+    
+    public string CreateRefreshToken()
+    {
+        // Generate a cryptographically secure random token
+        var randomBytes = new byte[64]; // 64 bytes = 512 bits
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomBytes);
+        
+        // Convert to Base64 URL-safe string
+        return Convert.ToBase64String(randomBytes)
+            .Replace("+", "-")
+            .Replace("/", "_")
+            .TrimEnd('='); // Remove padding
     }
 }

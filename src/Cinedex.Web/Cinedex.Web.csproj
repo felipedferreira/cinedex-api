@@ -27,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Features\Authentication\Refresh\" />
       <Folder Include="logs\" />
     </ItemGroup>
 

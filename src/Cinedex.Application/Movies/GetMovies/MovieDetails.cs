@@ -1,4 +1,4 @@
-﻿namespace Cinedex.Application.Movies.Queries.GetMovies;
+﻿namespace Cinedex.Application.Movies.GetMovies;
 
 public class MovieDetails
 {

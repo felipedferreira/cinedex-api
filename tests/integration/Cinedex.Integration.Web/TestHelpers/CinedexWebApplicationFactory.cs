@@ -1,8 +1,7 @@
-﻿using Cinedex.Web;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace Cinedex.Integration.Web.TestHelpers;
+namespace Cinedex.Web.IntegrationTests.TestHelpers;
 
 public class CinedexWebApplicationFactory : WebApplicationFactory<Program>
 {

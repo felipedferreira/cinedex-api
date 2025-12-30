@@ -5,8 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-      <UserSecretsId>2f0d8e56-a6fd-45d8-afd9-493c4d6b4446</UserSecretsId>
-  </PropertyGroup>
+        <UserSecretsId>2f0d8e56-a6fd-45d8-afd9-493c4d6b4446</UserSecretsId>
+    </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />

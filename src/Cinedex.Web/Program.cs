@@ -1,7 +1,8 @@
 using System.Net.Mime;
 using System.Text;
 using Cinedex.Application;
-using Cinedex.Web.Features.Authentication.Login;
+using Cinedex.Web.Constants;
+using Cinedex.Web.Features.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using Cinedex.Web.Features.Movies;
 using Microsoft.AspNetCore.Antiforgery;
@@ -30,8 +31,8 @@ public class Program
         
         builder.Services.AddAntiforgery(options =>
         {
-            options.HeaderName = "X-XSRF-TOKEN";
-            options.Cookie.Name = "XSRF-TOKEN";
+            options.HeaderName = AntiforgeryConstants.XsrfHeader;
+            options.Cookie.Name = AntiforgeryConstants.XsrfCookie;
             options.Cookie.HttpOnly = false;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             options.Cookie.SameSite = SameSiteMode.Strict;
@@ -58,7 +59,15 @@ public class Program
         builder.Services.AddApplicationServices();
         builder.Services.AddEndpointsApiExplorer();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        builder.Services.AddOpenApi();
+        builder.Services.AddOpenApi("v1", options =>
+        {
+            options.AddDocumentTransformer((document, context, cancellationToken) =>
+            {
+                document.Info.Title = "Cinedex API";
+                document.Info.Version = "1.0";
+                return Task.CompletedTask;
+            });
+        });
         
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -69,9 +78,9 @@ public class Program
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = "yourdomain.com",
-                    ValidAudience = "yourdomain.com",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_super_secret_key")),
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)),
                     ClockSkew = TimeSpan.FromSeconds(30),
                 };
             });
@@ -91,21 +100,38 @@ public class Program
             // --- 👇 Add Scalar UI (the modern Swagger alternative) ---
             app.MapScalarApiReference(options =>
             {
-                options.Title = "🎬 MovieBuff API";
-                options.Theme = ScalarTheme.BluePlanet;
                 options.DarkMode = true;
-                options.WithBaseServerUrl("/movie-svc");
+                options.DefaultHttpClient = new(ScalarTarget.Shell, ScalarClient.Curl);
+                options.EnabledClients = [ScalarClient.HttpClient, ScalarClient.Curl, ScalarClient.Fetch, ScalarClient.Axios];
+                options.EnabledTargets = [ScalarTarget.Shell, ScalarTarget.CSharp, ScalarTarget.JavaScript];
+                options
+                    .WithDefaultHttpClient(ScalarTarget.Shell, ScalarClient.Curl)
+                    .WithClassicLayout()
+                    .WithBaseServerUrl(PathConstants.ApiBasePath)
+                    .WithTheme(ScalarTheme.BluePlanet)
+                    .WithTitle("🎬 MovieBuff API");
             });
         }
         
         // logs requests
         app.UseSerilogRequestLogging();
         
-        // Adds middleware for redirecting HTTP Requests to HTTPS. 
+        // Adds middleware for redirecting HTTP Requests to HTTPS.
         app.UseHttpsRedirection();
-        
+
+        // Middleware to redirect requests without API base path prefix
+        app.Use(async (context, next) =>
+        {
+            if (!context.Request.Path.StartsWithSegments(PathConstants.ApiBasePath))
+            {
+                context.Response.Redirect($"{PathConstants.ApiBasePath}{context.Request.Path}{context.Request.QueryString}", permanent: true);
+                return;
+            }
+            await next();
+        });
+
         // Sets the path base to "movie-svc" so that all endpoints are prefixed with this path.
-        app.UsePathBase("/movie-svc");
+        app.UsePathBase(PathConstants.ApiBasePath);
         if (corsEnabled)
         {
             app.UseCors("DevCors");
@@ -117,11 +143,10 @@ public class Program
         
         // Maps endpoints
         app.MapMoviesEndpoints();
-        app.MapLoginEndpoint();
+        app.MapAuthenticationEndpoints();
         app.MapGet("/csrf", (IAntiforgery antiforgery, HttpContext ctx) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(ctx);
-
             return Results.Content(tokens.RequestToken, MediaTypeNames.Text.Plain);
         });
 

@@ -11,7 +11,7 @@ public class JwtTokenProvider(IOptions<JwtOptions> jwtOptions) : ITokenProvider
 {
     private readonly JwtOptions _jwtOptions = jwtOptions.Value;
     
-    public string GenerateToken(Guid userId, string email)
+    public string GenerateAccessToken(Guid userId, string email)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

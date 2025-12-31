@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 using Cinedex.Application.Abstractions.Authentication;
 using Cinedex.Application.Authentication.Login;
@@ -37,6 +38,7 @@ internal static class AuthenticationEndpoints
                 HttpContext httpContext,
                 CancellationToken cancellationToken) =>
             {
+                // temp code to test.
                 #region [1. Validate CSRF token (security check before any processing) returns 403 if invalid]
                 try
                 {

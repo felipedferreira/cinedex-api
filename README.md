@@ -83,4 +83,5 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 📖 Extra Documentation
 
-- **[Configuration Guide](CONFIGURATIONS.md)** — Environment setup, JWT, CORS, cookies, security settings
+- **[Configuration Guide](docs/CONFIGURATIONS.md)** — Environment setup, JWT, CORS, cookies, security settings
+- **[Middleware Pipeline](docs/MIDDLEWARE.md)** — Detailed explanation of middleware order, responsibilities, and error handling

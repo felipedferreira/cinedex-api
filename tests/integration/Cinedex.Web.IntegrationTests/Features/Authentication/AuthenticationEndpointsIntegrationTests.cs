@@ -36,7 +36,7 @@ public class AuthenticationEndpointsIntegrationTests : IClassFixture<CinedexWebA
         Assert.False(string.IsNullOrWhiteSpace(accessToken), "Access token should not be empty");
 
         // Extract refresh token from Set-Cookie header
-        var refreshTokenCookie = ExtractCookie(loginResponse, AuthenticationConstants.RefreshTokenCookie);
+        var refreshTokenCookie = HttpResponseHelpers.ExtractCookie(loginResponse, AuthenticationConstants.RefreshTokenCookie);
         Assert.NotNull(refreshTokenCookie);
 
         // Step 2: Get CSRF token
@@ -47,7 +47,7 @@ public class AuthenticationEndpointsIntegrationTests : IClassFixture<CinedexWebA
         Assert.False(string.IsNullOrWhiteSpace(csrfToken), "CSRF token should not be empty");
 
         // Extract XSRF cookie from Set-Cookie header
-        var xsrfCookie = ExtractCookie(csrfResponse, AntiforgeryConstants.XsrfCookie);
+        var xsrfCookie = HttpResponseHelpers.ExtractCookie(csrfResponse, AntiforgeryConstants.XsrfCookie);
         Assert.NotNull(xsrfCookie);
 
         // Step 3: Refresh the token with CSRF token in header and cookies
@@ -64,7 +64,7 @@ public class AuthenticationEndpointsIntegrationTests : IClassFixture<CinedexWebA
         Assert.False(string.IsNullOrWhiteSpace(newAccessToken), "New access token should not be empty");
 
         // Verify a new refresh token cookie was set (token rotation)
-        var newRefreshTokenCookie = ExtractCookie(refreshResponse, AuthenticationConstants.RefreshTokenCookie);
+        var newRefreshTokenCookie = HttpResponseHelpers.ExtractCookie(refreshResponse, AuthenticationConstants.RefreshTokenCookie);
         Assert.NotNull(newRefreshTokenCookie);
     }
 
@@ -129,24 +129,5 @@ public class AuthenticationEndpointsIntegrationTests : IClassFixture<CinedexWebA
 
         // Assert - Should return 401 Unauthorized due to missing refresh token
         Assert.Equal(HttpStatusCode.Unauthorized, refreshResponse.StatusCode);
-    }
-
-    private static string? ExtractCookie(HttpResponseMessage response, string cookieName)
-    {
-        if (!response.Headers.TryGetValues("Set-Cookie", out var setCookieHeaders))
-        {
-            return null;
-        }
-
-        foreach (var setCookie in setCookieHeaders)
-        {
-            var cookieParts = setCookie.Split(';')[0].Split('=');
-            if (cookieParts.Length == 2 && cookieParts[0].Trim() == cookieName)
-            {
-                return cookieParts[1].Trim();
-            }
-        }
-
-        return null;
     }
 }

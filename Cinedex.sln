@@ -45,6 +45,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{E207276C-9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinedex.Infrastructure.IntegrationTests", "tests\integration\Cinedex.Infrastructure.IntegrationTests\Cinedex.Infrastructure.IntegrationTests.csproj", "{AB83E6AF-7BCD-4AAB-BD83-41E2E72BF8AF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "esc", "esc", "{833AA2F3-9CE5-41D4-ADCE-E2E2D3942A0F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		LICENSE = LICENSE
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

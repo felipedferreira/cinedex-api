@@ -2,7 +2,9 @@ using System.Net.Mime;
 using System.Text;
 using Cinedex.Application;
 using Cinedex.Web.Constants;
+using Cinedex.Web.Extensions;
 using Cinedex.Web.Features.Authentication;
+using Cinedex.Web.Middleware.ExceptionHandlers;
 using Microsoft.AspNetCore.HttpOverrides;
 using Cinedex.Web.Features.Movies;
 using Microsoft.AspNetCore.Antiforgery;
@@ -57,6 +59,7 @@ public class Program
         }
 
         builder.Services.AddApplicationServices();
+        builder.Services.AddCustomProblemDetails();
         builder.Services.AddEndpointsApiExplorer();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi("v1", options =>
@@ -85,6 +88,10 @@ public class Program
                 };
             });
         builder.Services.AddAuthorization();
+        // Register exception handlers in order (specific → general)
+        builder.Services.AddExceptionHandler<AuthenticationExceptionHandler>();
+        builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
         var app = builder.Build();
         app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -115,7 +122,13 @@ public class Program
         
         // logs requests
         app.UseSerilogRequestLogging();
-        
+
+        // Global exception handling
+        app.UseExceptionHandler();
+
+        // Handle status code responses (401, 403, 404, etc.) that have no body
+        app.UseStatusCodePages();
+
         // Adds middleware for redirecting HTTP Requests to HTTPS.
         app.UseHttpsRedirection();
 
@@ -144,14 +157,15 @@ public class Program
         // Maps endpoints
         app.MapMoviesEndpoints();
         app.MapAuthenticationEndpoints();
-        app
-            .MapGet("/csrf", (IAntiforgery antiforgery, HttpContext ctx) =>
+        app.MapGroup("/security")
+            .WithTags("Security")
+            .MapPost("/csrf", (IAntiforgery antiforgery, HttpContext ctx) =>
             {
                 var tokens = antiforgery.GetAndStoreTokens(ctx);
                 return Results.Content(tokens.RequestToken, MediaTypeNames.Text.Plain);
             })
-            .WithSummary("Get CSRF token")
-            .WithDescription("Generates and returns a new CSRF token for client-side form submissions. The token should be included in the X-XSRF-TOKEN header for state-changing requests.")
+            .WithSummary("Creates CSRF token")
+            .WithDescription("Creates and returns a new CSRF token for client-side form submissions. The token should be included in the X-XSRF-TOKEN header for state-changing requests.")
             .Produces<string>(StatusCodes.Status200OK, MediaTypeNames.Text.Plain);
 
         app.Logger.LogInformation("Application has started.");

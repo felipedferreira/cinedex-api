@@ -18,8 +18,13 @@ public sealed class RefreshUseCase(ITokenProvider tokenProvider)
         //   Global exception handler will catch AuthenticationException base type and return 401
         //   Log specific exception types server-side for security monitoring and debugging
 
+        // this will come from the user lookup
+        var userId = Guid.NewGuid();
+        var email = "email";
         // TODO - generate new access token and refresh token
-
+        var accessToken = tokenProvider.CreateAccessToken(userId, email);
+        var refreshToken = tokenProvider.CreateRefreshToken();
+        
         // TODO - invalidate existing refresh token (token rotation best practice)
         //   Security: When issuing a new refresh token, invalidate the old one
         //   Consider adding ReplacedByToken field to track token rotation chains
@@ -29,12 +34,6 @@ public sealed class RefreshUseCase(ITokenProvider tokenProvider)
         //   - Store: RefreshToken (string), UserId (Guid), ExpiresAt (DateTime), CreatedAt (DateTime), IsRevoked (bool)
         //   - Consider adding: ReplacedByToken (string, nullable) for tracking rotation chains
         //   - Add index on RefreshToken column for fast lookups
-
-        // this will come from the user lookup
-        var userId = Guid.NewGuid();
-        var email = "email";
-        var accessToken = tokenProvider.CreateAccessToken(userId, email);
-        var refreshToken = tokenProvider.CreateRefreshToken();
         return new RefreshResponse(accessToken, refreshToken);
     }
 }

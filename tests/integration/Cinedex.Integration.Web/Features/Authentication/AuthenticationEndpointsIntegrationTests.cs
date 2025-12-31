@@ -40,7 +40,7 @@ public class AuthenticationEndpointsIntegrationTests : IClassFixture<CinedexWebA
         Assert.NotNull(refreshTokenCookie);
 
         // Step 2: Get CSRF token
-        var csrfResponse = await httpClient.GetAsync("/movie-svc/csrf");
+        var csrfResponse = await httpClient.PostAsync("/movie-svc/security/csrf", null);
         Assert.Equal(HttpStatusCode.OK, csrfResponse.StatusCode);
 
         var csrfToken = await csrfResponse.Content.ReadAsStringAsync();
@@ -88,7 +88,7 @@ public class AuthenticationEndpointsIntegrationTests : IClassFixture<CinedexWebA
         Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
 
         // Step 2: Get CSRF token (but don't use it)
-        var csrfResponse = await clientWithCookies.GetAsync("/movie-svc/csrf");
+        var csrfResponse = await httpClient.PostAsync("/movie-svc/security/csrf", null);
         Assert.Equal(HttpStatusCode.OK, csrfResponse.StatusCode);
 
         // Step 3: Try to refresh without CSRF header
@@ -116,7 +116,7 @@ public class AuthenticationEndpointsIntegrationTests : IClassFixture<CinedexWebA
         using var clientWithCookies = new HttpClient(handler) { BaseAddress = httpClient.BaseAddress };
 
         // Step 1: Get CSRF token
-        var csrfResponse = await clientWithCookies.GetAsync("/movie-svc/csrf");
+        var csrfResponse = await clientWithCookies.PostAsync("/movie-svc/security/csrf", null);
         Assert.Equal(HttpStatusCode.OK, csrfResponse.StatusCode);
 
         var csrfToken = await csrfResponse.Content.ReadAsStringAsync();

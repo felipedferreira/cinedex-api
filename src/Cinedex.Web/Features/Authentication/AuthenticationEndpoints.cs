@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
-using Cinedex.Application.Abstractions.Authentication;
 using Cinedex.Application.Authentication.Login;
 using Cinedex.Application.Authentication.Refresh;
 using Cinedex.Web.Constants;

@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\src\Cinedex.Infrastructure\Cinedex.Infrastructure.csproj" />
+    </ItemGroup>
+</Project>

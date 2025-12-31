@@ -4,10 +4,10 @@ namespace Cinedex.Infrastructure.Persistence.Queries;
 
 public class MoviesQuery : IMoviesQuery
 {
-    public async Task<IEnumerable<MovieReadModel>> GetAllMoviesAsync(CancellationToken cancellationToken)
+    public Task<IEnumerable<MovieReadModel>> GetAllMoviesAsync(CancellationToken cancellationToken)
     {
         // Temporary hard-coded data for demonstration purposes only.
-        return [
+        IEnumerable<MovieReadModel> movies = [
             new MovieReadModel
             {
                 Id = Guid.NewGuid(),
@@ -21,5 +21,7 @@ public class MoviesQuery : IMoviesQuery
                 Year = 1997,
             },
         ];
+
+        return Task.FromResult(movies);
     }
 }

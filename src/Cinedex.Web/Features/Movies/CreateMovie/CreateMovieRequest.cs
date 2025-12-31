@@ -7,7 +7,7 @@ public class CreateMovieRequest
     [Required]
     [MinLength(1)]
     [MaxLength(250)]
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
     
     [Required]
     [Range(1_950, 3_000, ErrorMessage = "Year of release must be after 1950 but before 3000.")]

@@ -2,7 +2,11 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
 name: .NET
-
+run-name: >-
+  ${{ github.event_name == 'pull_request'
+      && format('PR #{0}: {1}', github.event.pull_request.number, github.event.pull_request.title)
+      || github.event.head_commit.message
+  }} • build #${{ github.run_number }}.${{ github.run_attempt }}
 on:
   push:
     branches: [ "main" ]

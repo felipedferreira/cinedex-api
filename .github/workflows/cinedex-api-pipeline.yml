@@ -1,0 +1,54 @@
+name: "🧰 .NET CI/CD pipeline"
+
+run-name: >-
+  ${{ format(
+      '{0} • build #{1}.{2} • {3}',
+      github.ref_name,
+      github.run_number,
+      github.run_attempt,
+      github.event.head_commit.message || github.event.pull_request.title || github.sha
+  ) }}
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build_test:
+    name: "🏗️ Build + 🧪 Test + 🚀 Release"
+    runs-on: self-hosted
+
+    steps:
+      - name: "📦 Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🧹 Restore"
+        run: dotnet restore -v d
+
+      - name: "🏗️ Build"
+        run: dotnet build --configuration Release --no-restore --verbosity d
+
+      - name: "🧪 Test"
+        run: dotnet test --no-build -c Release --logger "trx;LogFileName=test-results.trx"
+
+      - name: "📢 Publish"
+        run: |
+          dotnet publish \
+            --configuration Release \
+            --no-build \
+            --nologo \
+            --output ./publish
+
+      - name: "🚚 Deploy to /home/felipe/apps/cinedex-api"
+        run: rsync -av --delete ./publish/ /home/felipe/apps/cinedex-api/
+
+      - name: "🔁 Restart cinedex-api (user systemd)"
+        run: systemctl --user restart cinedex-api.service
+
+      - name: Show service status (debug)
+        run: |
+          export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+          systemctl --user --no-pager --full status cinedex-api.service

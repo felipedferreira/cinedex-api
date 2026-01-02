@@ -5,13 +5,16 @@ name: .NET
 run-name: >-
   ${{ github.event_name == 'pull_request'
       && format('PR #{0}: {1}', github.event.pull_request.number, github.event.pull_request.title)
+      || github.event_name == 'workflow_dispatch'
+      && format('manual: {0} • build #{1}.{2}', github.ref_name, github.run_number, github.run_attempt)
       || github.event.head_commit.message
-  }} • build #${{ github.run_number }}.${{ github.run_attempt }}
+  }}
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:   # 👈 enables "Run workflow" button
 
 jobs:
   build:

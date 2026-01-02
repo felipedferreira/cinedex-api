@@ -55,9 +55,3 @@ jobs:
           systemctl --user daemon-reload
           systemctl --user restart cinedex-api.service
           systemctl --user --no-pager --full status cinedex-api.service
-
-      - name: "🕵️ Debug: who am I?"
-        run: |
-          whoami
-          id
-          ps -o user= -p $PPID || true

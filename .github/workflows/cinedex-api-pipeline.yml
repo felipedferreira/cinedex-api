@@ -46,9 +46,18 @@ jobs:
         run: rsync -av --delete ./publish/ /home/felipe/apps/cinedex-api/
 
       - name: "🔁 Restart cinedex-api (user systemd)"
-        run: systemctl --user restart cinedex-api.service
-
-      - name: Show service status (debug)
         run: |
-          export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+          set -euo pipefail
+          uid="$(id -u)"
+          export XDG_RUNTIME_DIR="/run/user/$uid"
+          export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+          
+          systemctl --user daemon-reload
+          systemctl --user restart cinedex-api.service
           systemctl --user --no-pager --full status cinedex-api.service
+
+      - name: "🕵️ Debug: who am I?"
+        run: |
+          whoami
+          id
+          ps -o user= -p $PPID || true

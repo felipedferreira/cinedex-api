@@ -11,15 +11,34 @@ run-name: >-
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build_test:
-    name: "🏗️ Build + 🧪 Test + 🚀 Release"
+  build:
+    name: "🏗️ Build"
     runs-on: self-hosted
+
+    steps:
+      - name: "📦 Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🧹 Restore"
+        run: dotnet restore --verbosity d
+
+      - name: "🏗️ Build (Release)"
+        run: dotnet build --configuration Release --no-restore --verbosity d --nologo
+
+  test:
+    name: "🧪 Test"
+    runs-on: self-hosted
+    needs: build
 
     steps:
       - name: "📦 Checkout"
@@ -28,19 +47,37 @@ jobs:
       - name: "🧹 Restore"
         run: dotnet restore -v d
 
-      - name: "🏗️ Build"
-        run: dotnet build --configuration Release --no-restore --verbosity d
-
-      - name: "🧪 Test"
+      - name: "🧪 Test (TRX)"
         run: dotnet test --no-build -c Release --logger "trx;LogFileName=test-results.trx"
 
-      - name: "📢 Publish"
+  publish:
+    name: "📢 Publish 🚀 Deploy 🔁 Restart"
+    runs-on: self-hosted
+    needs: test
+
+    steps:
+      - name: "📦 Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🧹 Restore"
+        run: dotnet restore -v d
+
+      - name: "🏗️ Build (Release)"
+        run: dotnet build --configuration Release --no-restore --verbosity d --nologo
+
+      - name: "📢 Publish (Release)"
         run: |
           dotnet publish \
             --configuration Release \
             --no-build \
             --nologo \
             --output ./publish
+
+      - name: "📦 Upload publish artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish
+          path: ./publish/
 
       - name: "🚚 Deploy to /home/felipe/apps/cinedex-api"
         run: rsync -av --delete ./publish/ /home/felipe/apps/cinedex-api/
@@ -51,7 +88,7 @@ jobs:
           uid="$(id -u)"
           export XDG_RUNTIME_DIR="/run/user/$uid"
           export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
-          
+
           systemctl --user daemon-reload
           systemctl --user restart cinedex-api.service
           systemctl --user --no-pager --full status cinedex-api.service

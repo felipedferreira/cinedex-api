@@ -48,7 +48,7 @@ jobs:
         run: dotnet restore -v d
 
       - name: "🧪 Test (TRX)"
-        run: dotnet test --no-build -c Release --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test -c Release --logger "trx;LogFileName=test-results.trx"
 
   publish:
     name: "📢 Publish 🚀 Deploy 🔁 Restart"

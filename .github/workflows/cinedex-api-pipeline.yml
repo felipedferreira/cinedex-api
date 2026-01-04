@@ -29,10 +29,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "🧹 Restore"
-        run: dotnet restore --verbosity minimal
+        run: dotnet restore --verbosity detailed
 
       - name: "🏗️ Build (Release)"
-        run: dotnet build --configuration Release --no-restore --verbosity d --nologo
+        run: dotnet build --configuration Release --no-restore --verbosity detailed --nologo
 
       - name: "📦 Upload build outputs"
         uses: actions/upload-artifact@v4
@@ -59,7 +59,7 @@ jobs:
           name: build-output
 
       - name: "🧪 Test (no build)"
-        run: dotnet test -c Release --no-build --no-restore --logger "trx;LogFileName=test-results.trx" --verbosity diagnostic
+        run: dotnet test -c Release --no-build --no-restore --logger "trx;LogFileName=test-results.trx" --verbosity detailed
 
   package:
     name: "📦 Package"
@@ -81,6 +81,7 @@ jobs:
             --configuration Release \
             --no-build \
             --nologo \
+            --verbosity detailed \
             --output ./publish
 
       - name: "📦 Upload publish artifact"
@@ -101,7 +102,7 @@ jobs:
           path: ./publish
 
       - name: "🚚 Deploy to /home/felipe/apps/cinedex-api"
-        run: rsync -av --delete ./publish/ /home/felipe/apps/cinedex-api/
+        run: rsync -av --delete ./publish/ "${DEPLOY_DIR}/"
 
       - name: "🔁 Restart cinedex-api (user systemd)"
         run: |

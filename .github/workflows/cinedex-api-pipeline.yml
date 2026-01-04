@@ -24,16 +24,25 @@ jobs:
   build:
     name: "🏗️ Build"
     runs-on: self-hosted
-
     steps:
       - name: "📦 Checkout"
         uses: actions/checkout@v4
 
       - name: "🧹 Restore"
-        run: dotnet restore --verbosity d
+        run: dotnet restore --verbosity minimal
 
       - name: "🏗️ Build (Release)"
         run: dotnet build --configuration Release --no-restore --verbosity d --nologo
+
+      - name: "📦 Upload build outputs"
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            src/**/bin/Release/
+            src/**/obj/
+            tests/**/bin/Release/
+            tests/**/obj/
 
   test:
     name: "🧪 Test"
@@ -44,14 +53,16 @@ jobs:
       - name: "📦 Checkout"
         uses: actions/checkout@v4
 
-      - name: "🧹 Restore"
-        run: dotnet restore -v d
+      - name: "📥 Download build outputs"
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
 
-      - name: "🧪 Test (TRX)"
-        run: dotnet test -c Release --logger "trx;LogFileName=test-results.trx"
+      - name: "🧪 Test (no build)"
+        run: dotnet test -c Release --no-build --no-restore --logger "trx;LogFileName=test-results.trx" --verbosity diagnostic
 
-  publish:
-    name: "📢 Publish 🚀 Deploy 🔁 Restart"
+  package:
+    name: "📦 Package"
     runs-on: self-hosted
     needs: test
 
@@ -59,13 +70,12 @@ jobs:
       - name: "📦 Checkout"
         uses: actions/checkout@v4
 
-      - name: "🧹 Restore"
-        run: dotnet restore -v d
+      - name: "📥 Download build outputs"
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
 
-      - name: "🏗️ Build (Release)"
-        run: dotnet build --configuration Release --no-restore --verbosity d --nologo
-
-      - name: "📢 Publish (Release)"
+      - name: "📢 Publish (Release & no build)"
         run: |
           dotnet publish \
             --configuration Release \
@@ -78,6 +88,17 @@ jobs:
         with:
           name: publish
           path: ./publish/
+
+  deploy:
+    name: "🚀 Deploy"
+    runs-on: self-hosted
+    needs: package
+    steps:
+      - name: "📥 Download publish artifact"
+        uses: actions/download-artifact@v4
+        with:
+          name: publish
+          path: ./publish
 
       - name: "🚚 Deploy to /home/felipe/apps/cinedex-api"
         run: rsync -av --delete ./publish/ /home/felipe/apps/cinedex-api/

@@ -94,10 +94,6 @@ jobs:
     name: "🚀 Deploy"
     runs-on: self-hosted
     needs: package
-    environment: production
-
-    env:
-      DEPLOY_DIR: ${{ secrets.DEPLOY_DIR }}
 
     steps:
       - name: "📥 Download publish artifact"
@@ -107,7 +103,7 @@ jobs:
           path: ./publish
 
       - name: "🚚 Deploy"
-        run: rsync -av --delete ./publish/ "${DEPLOY_DIR}/"
+        run: rsync -av --delete ./publish/ /home/felipe/apps/cinedex-api/
 
       - name: "🔁 Restart cinedex-api (user systemd)"
         run: |
